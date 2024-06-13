@@ -5,6 +5,11 @@ const countriesContainer = document.querySelector('.countries');
 
 ///////////////////////////////////////
 
+const renderError = function (msg) {
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  // countriesContainer.style.opacity = 1;
+};
+
 const renderCountry = function (data, className = ' ') {
   const html = `<article class="country ${className}">
 <img class="country__img" src="${data.flag}" />
@@ -19,7 +24,7 @@ const renderCountry = function (data, className = ' ') {
 </div>
 </article>`;
   countriesContainer.insertAdjacentHTML('beforeend', html); // study
-  countriesContainer.style.opacity = 1;
+  // countriesContainer.style.opacity = 1;
 };
 
 // const getCountryAndNeighbour = country => {
@@ -114,7 +119,16 @@ const getCountryData = function (country) {
       );
     })
     .then(response => response.json())
-    .then(data => renderCountry(data, 'neighbour'));
+    .then(data => renderCountry(data, 'neighbour'))
+    .catch(err => {
+      console.error(`${err} 💥💥💥`);
+      renderError(`Something went wrong 💥💥 ${err.message}. Try again!`);
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
 };
 
-getCountryData('netherlands');
+btn.addEventListener('click', function () {
+  getCountryData('argentina');
+});
