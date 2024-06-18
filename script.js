@@ -358,9 +358,7 @@ const whereAmI = async function () {
     // Reverse Geocoding
     const resGeo = await fetch(`https://geocode.xyz/${lat}, ${lng}?geoit=json`);
     if (!resGeo.ok) throw new Error('Problem getting location data');
-
     const dataGeo = await resGeo.json();
-    console.log(dataGeo);
 
     // Country data
     const res = await fetch(
@@ -369,27 +367,32 @@ const whereAmI = async function () {
     if (!resGeo.ok) throw new Error('Problem getting location data');
 
     const data = await res.json();
-    console.log(data);
     renderCountry(data[0]);
+    return `You are in ${dataGeo.city}, ${dataGeo.country}`;
   } catch (err) {
     console.error(`${err} 💥`);
     renderError(`💥 ${err.message}`);
+
+    // Reject promise returned from async function
+    throw err;
   }
 };
 
-whereAmI();
-whereAmI();
-whereAmI();
-whereAmI();
-whereAmI();
-whereAmI();
-whereAmI();
-whereAmI();
+console.log('1: Will get location');
+// const city = whereAmI();
+// console.log(city);
 
-// try {
-//   let y = 1;
-//   const x = 2;
-//   x = 3;
-// } catch (err) {
-//   alert(err.message);
-// }
+// whereAmI()
+//   .then(city => console.log(`2: ${city}`))
+//   .catch(err => console.error(`2: ${err.msg} 💥`))
+//   .finally(() => console.log('3: Finished getting location'));
+
+(async function () {
+  try {
+    const city = await whereAmI();
+    console.log(`2: ${city}`);
+  } catch (err) {
+    console.error(`2: ${err.msg} 💥`);
+  }
+  console.log('3: Finished getting location');
+})();
