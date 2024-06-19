@@ -425,3 +425,39 @@ const getCountries = async function (c1, c2, c3) {
   }
 };
 getCountries('argentina', 'netherlands', 'italy');
+
+/////-----------------------/////
+
+// Promise.race
+(async function () {
+  const res = await Promise.race([
+    getJSON(`https://restcountries.com/v3.1/name/italy`),
+    getJSON(`https://restcountries.com/v3.1/name/argentina`),
+    getJSON(`https://restcountries.com/v3.1/name/netherlands`),
+  ]);
+  console.log(res[0]);
+})();
+
+const timeout = function (s) {
+  return new Promise(function (_, reject) {
+    setTimeout(function () {
+      reject(new Error('Request took too long'));
+    }, sec);
+  });
+};
+
+Promise.race([
+  getJSON(`https://restcountries.com/v3.1/name/argentina`),
+  timeout(1),
+])
+  .then(res => console.log(res[0]))
+  .catch(err => console.error(err));
+
+// Promise.allSettled
+Promise.allSettled([
+  Promise.resolve('Sucess'),
+  Promise.rejected('ERROR'),
+  Promise.resolve('Another success'),
+]).then(res => console.log(res));
+
+// Promise.any
