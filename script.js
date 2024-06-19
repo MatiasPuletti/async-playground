@@ -27,6 +27,13 @@ const renderCountry = function (data, className = ' ') {
   // countriesContainer.style.opacity = 1;
 };
 
+const getJSON = function (url, errorMsg = 'Something went wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+
+    return response.json();
+  });
+};
 // const getCountryAndNeighbour = country => {
 //   // AJAX call for country 1
 //   const request = new XMLHttpRequest();
@@ -378,7 +385,7 @@ const whereAmI = async function () {
   }
 };
 
-console.log('1: Will get location');
+// console.log('1: Will get location');
 // const city = whereAmI();
 // console.log(city);
 
@@ -387,12 +394,34 @@ console.log('1: Will get location');
 //   .catch(err => console.error(`2: ${err.msg} 💥`))
 //   .finally(() => console.log('3: Finished getting location'));
 
-(async function () {
+// (async function () {
+//   try {
+//     const city = await whereAmI();
+//     console.log(`2: ${city}`);
+//   } catch (err) {
+//     console.error(`2: ${err.msg} 💥`);
+//   }
+//   console.log('3: Finished getting location');
+// })();
+
+const getCountries = async function (c1, c2, c3) {
   try {
-    const city = await whereAmI();
-    console.log(`2: ${city}`);
+    // const [data1] = await getJSON(`https://restcountries.com/v3.1/name/${c1}`);
+    // const [data2] = await getJSON(`https://restcountries.com/v3.1/name/${c2}`);
+    // const [data3] = await getJSON(`https://restcountries.com/v3.1/name/${c3}`);
+    // console.log([...data1.capital, ...data2.capital, ...data3.capital]);
+
+    const data = await Promise.all([
+      getJSON(`https://restcountries.com/v3.1/name/${c1}`),
+      await getJSON(`https://restcountries.com/v3.1/name/${c2}`),
+      await getJSON(`https://restcountries.com/v3.1/name/${c3}`),
+    ]);
+
+    console.log(data.map(d => d[0].capital));
   } catch (err) {
-    console.error(`2: ${err.msg} 💥`);
+    console.error(`${err} ocuured 💥`);
+  } finally {
+    console.log('Finished the functions execution');
   }
-  console.log('3: Finished getting location');
-})();
+};
+getCountries('argentina', 'netherlands', 'italy');
